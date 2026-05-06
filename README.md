@@ -17,11 +17,12 @@ Sanitized operating guide for designing, shipping, reviewing, and maintaining
 SmoothFlow AI agents.
 
 Related internal docs (not in this repo):
-docs/architecture.md
-docs/ai-decision-matrix.md
-docs/runtime/client-playbooks.md
-docs/runtime/voice-managed-turn-contract.md
-docs/runtime/multichannel-smoke-matrix.md
+
+- docs/architecture.md
+- docs/ai-decision-matrix.md
+- docs/runtime/client-playbooks.md
+- docs/runtime/voice-managed-turn-contract.md
+- docs/runtime/multichannel-smoke-matrix.md
 
 ## 1. Purpose
 
@@ -75,12 +76,12 @@ Used for SMS, Yelp, and similar message channels.
 
 Primary path  (not in this repo):
 
-runtime/workflows.ts
-runtime/ai.ts
-services/contactDetection.ts
-services/escalationDetector.ts
-runtime/categories.ts
-runtime/intake-schemas.ts
+- runtime/workflows.ts
+- runtime/ai.ts
+- services/contactDetection.ts
+- services/escalationDetector.ts
+- runtime/categories.ts
+- runtime/intake-schemas.ts
 
 The text agent is a decision engine. It builds context, applies hard rules,
 optionally calls the model, validates the result, and sends or withholds the
@@ -99,12 +100,12 @@ Primary platform boundary:
 
 Relevant files (not in this repo):
 
-adapters/retell.ts
-services/agentPrompt.v2.ts
-prompts/**
-runtime/voice/managedRetell.ts
-runtime/voiceBookingIntents.ts
-runtime/voice-managed-turn-contract.md
+- adapters/retell.ts
+- services/agentPrompt.v2.ts
+- prompts/**
+- runtime/voice/managedRetell.ts
+- runtime/voiceBookingIntents.ts
+- runtime/voice-managed-turn-contract.md
 
 Some clients may also have isolated voice-agent source folders outside the main
 SmoothFlow repo. Treat those as client-specific source of truth and keep
