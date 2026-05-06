@@ -1,20 +1,27 @@
 # SmoothFlow AI Agent Playbook
 
+Public, sanitized excerpt of the operating playbook used to build and run 
+voice/text AI agents at [smoothflow.io](https://smoothflow.io). Shared as a 
+reference for operators building production conversational AI on stacks like 
+Twilio + Retell + Claude.
+
+This document covers architecture, prompt design, tool rules, observability, 
+release discipline, and incident review. It does not include production 
+prompts, customer secrets, or client-private operating details. Internal 
+source paths and related docs are referenced for orientation but are not 
+part of this public repository.
+
+---
+
 Sanitized operating guide for designing, shipping, reviewing, and maintaining
 SmoothFlow AI agents.
 
-This document intentionally does not contain production prompts, customer
-secrets, provider credentials, phone numbers, account IDs, Retell agent IDs, or
-client-private operating details. It describes the architecture, policy shape,
-QA process, and release discipline that production agents should follow.
-
-Related docs:
-
-- `docs/architecture.md`
-- `docs/ai-decision-matrix.md`
-- `docs/runtime/client-playbooks.md`
-- `docs/runtime/voice-managed-turn-contract.md`
-- `docs/runtime/multichannel-smoke-matrix.md`
+Related internal docs (not in this repo):
+docs/architecture.md
+docs/ai-decision-matrix.md
+docs/runtime/client-playbooks.md
+docs/runtime/voice-managed-turn-contract.md
+docs/runtime/multichannel-smoke-matrix.md
 
 ## 1. Purpose
 
@@ -66,14 +73,14 @@ SmoothFlow currently has two AI surfaces.
 
 Used for SMS, Yelp, and similar message channels.
 
-Primary path:
+Primary path  (not in this repo):
 
-- `server/src/runtime/workflows.ts`
-- `server/src/runtime/ai.ts`
-- `server/src/services/contactDetection.ts`
-- `server/src/services/escalationDetector.ts`
-- `server/src/runtime/categories.ts`
-- `server/src/runtime/intake-schemas.ts`
+runtime/workflows.ts
+runtime/ai.ts
+services/contactDetection.ts
+services/escalationDetector.ts
+runtime/categories.ts
+runtime/intake-schemas.ts
 
 The text agent is a decision engine. It builds context, applies hard rules,
 optionally calls the model, validates the result, and sends or withholds the
@@ -90,14 +97,14 @@ Primary platform boundary:
   post-call processing, booking/intake state, owner notifications, and
   observability.
 
-Relevant files:
+Relevant files (not in this repo):
 
-- `server/src/adapters/retell.ts`
-- `server/src/services/agentPrompt.v2.ts`
-- `server/src/prompts/**`
-- `server/src/runtime/voice/managedRetell.ts`
-- `server/src/runtime/voiceBookingIntents.ts`
-- `docs/runtime/voice-managed-turn-contract.md`
+adapters/retell.ts
+services/agentPrompt.v2.ts
+prompts/**
+runtime/voice/managedRetell.ts
+runtime/voiceBookingIntents.ts
+runtime/voice-managed-turn-contract.md
 
 Some clients may also have isolated voice-agent source folders outside the main
 SmoothFlow repo. Treat those as client-specific source of truth and keep
