@@ -1,0 +1,9 @@
+{
+  "name": "smoothflow-agent-playbook-reference",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Anonymized reference modules for the SmoothFlow AI Agent Playbook",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node --test" }
+}

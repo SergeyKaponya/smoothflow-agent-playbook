@@ -1,22 +1,48 @@
 # SmoothFlow AI Agent Playbook
 
-Public, sanitized excerpt of the operating playbook used to build and run 
-voice/text AI agents at [smoothflow.io](https://smoothflow.io). Shared as a 
-reference for operators building production conversational AI on stacks like 
-Twilio + Retell + Claude.
+[![reference tests](https://github.com/SergeyKaponya/smoothflow-agent-playbook/actions/workflows/test.yml/badge.svg)](https://github.com/SergeyKaponya/smoothflow-agent-playbook/actions/workflows/test.yml)
 
-This document covers architecture, prompt design, tool rules, observability, 
-release discipline, and incident review. It does not include production 
-prompts, customer secrets, or client-private operating details. Internal 
-source paths and related docs are referenced for orientation but are not 
-part of this public repository.
+The operating playbook I use to build, release, and run voice and text AI
+agents for small businesses at [smoothflow.io](https://smoothflow.io), on stacks
+like Retell + Twilio + Claude. It describes agents that take real calls and
+messages for paying clients.
 
----
+This repository has two parts:
 
-Sanitized operating guide for designing, shipping, reviewing, and maintaining
-SmoothFlow AI agents.
+- **The playbook** (this file): architecture, prompt design, tool rules,
+  observability, the release and rollback procedure, and incident review.
+- **[Reference code](reference/)**: a small set of modules and tests
+  extracted from one production deployment and anonymized. They show how the
+  rules below are enforced in code rather than in the prompt.
 
-Related internal docs (not in this repo):
+The full production code, prompts, and client configuration are private. I can
+walk through them on a call.
+
+## Reference Code
+
+Run it with `cd reference && npm test`. It needs Node.js 20 or later and has no
+dependencies.
+
+| Playbook rule | Where it is enforced |
+| --- | --- |
+| §8: a tool failure must never become a claimed success | [`voice-tools.cjs`](reference/src/voice-tools.cjs): unknown delivery outcomes are recorded and never retried or reported as sent |
+| §9 Protocol B: the agent sends a secure link and never confirms | [`voice-tools.cjs`](reference/src/voice-tools.cjs): every tool response carries `appointment_confirmed: false`; only a slot offered on the same call can be finalized |
+| §10: contact fields are verified, not guessed | [`contact.cjs`](reference/src/contact.cjs) |
+| §11: owner handoff with a useful summary | [`voice-tools.cjs`](reference/src/voice-tools.cjs): one lead-intent notification per call; [`booking-lifecycle.cjs`](reference/src/booking-lifecycle.cjs): provider status to owner notification |
+| §14: test and production can never be mixed | [`validate-config.cjs`](reference/src/validate-config.cjs): the process refuses to start on a mock/live mismatch |
+| §17: SMS consent, opt-out, and no duplicate texts | [`transactional-sms.cjs`](reference/src/transactional-sms.cjs) |
+| Webhook authentication | [`signatures.cjs`](reference/src/signatures.cjs): Retell and Twilio HMAC checks on the raw body |
+
+The tests in [`reference/test`](reference/test) are the quickest way to read
+the behavior: each test name states one rule.
+
+## Scope
+
+The playbook does not include production prompts, customer secrets, or
+client-private operating details. Section 3 names internal source files for
+orientation; those are not published.
+
+Related internal docs (not published):
 
 - docs/architecture.md
 - docs/ai-decision-matrix.md
@@ -74,7 +100,7 @@ SmoothFlow currently has two AI surfaces.
 
 Used for SMS, Yelp, and similar message channels.
 
-Primary path  (not in this repo):
+Primary path (internal, not published):
 
 - runtime/workflows.ts
 - runtime/ai.ts
@@ -98,7 +124,7 @@ Primary platform boundary:
   post-call processing, booking/intake state, owner notifications, and
   observability.
 
-Relevant files (not in this repo):
+Relevant files (internal, not published; see [`reference/src/voice-tools.cjs`](reference/src/voice-tools.cjs) for an anonymized equivalent of the tool and webhook layer):
 
 - adapters/retell.ts
 - services/agentPrompt.v2.ts
@@ -621,4 +647,3 @@ Before changing a live agent:
 - Verify phone/webhook routing.
 - Save after artifact.
 - Write a short client-facing summary.
-
